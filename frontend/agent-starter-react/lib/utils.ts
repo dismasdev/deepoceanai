@@ -114,6 +114,7 @@ export function getSandboxTokenSource(appConfig: AppConfig) {
           'X-Sandbox-Id': sandboxId,
         },
         body: JSON.stringify({
+          sandbox_id: sandboxId,
           room_config: roomConfig,
         }),
       });

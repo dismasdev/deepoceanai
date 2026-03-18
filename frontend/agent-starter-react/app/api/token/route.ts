@@ -34,20 +34,23 @@ export async function POST(req: Request) {
     // Parse room config from request body.
     const body = await req.json();
 
+    // Resolve sandbox ID from header, body, or configured default.
+    const headerSandboxId = req.headers.get('x-sandbox-id')?.trim();
+    const bodySandboxId = String(body?.sandbox_id ?? '').trim();
+    const requestSandboxId = headerSandboxId || bodySandboxId || ALLOWED_SANDBOX_ID || '';
+
     // Enforce single sandbox usage if configured.
-    if (ALLOWED_SANDBOX_ID) {
-      const requestSandboxId = req.headers.get('x-sandbox-id');
-      if (requestSandboxId !== ALLOWED_SANDBOX_ID) {
-        return new NextResponse('Sandbox ID mismatch', { status: 403 });
-      }
+    if (ALLOWED_SANDBOX_ID && requestSandboxId && requestSandboxId !== ALLOWED_SANDBOX_ID) {
+      return new NextResponse('Sandbox ID mismatch', { status: 403 });
     }
 
     const roomConfigJson = body?.room_config ?? {};
+    const dispatchAgentName = DEFAULT_AGENT_NAME || requestSandboxId;
     if (
-      DEFAULT_AGENT_NAME &&
+      dispatchAgentName &&
       (!Array.isArray(roomConfigJson.agents) || roomConfigJson.agents.length === 0)
     ) {
-      roomConfigJson.agents = [{ agent_name: DEFAULT_AGENT_NAME }];
+      roomConfigJson.agents = [{ agent_name: dispatchAgentName }];
     }
 
     // Recreate the RoomConfiguration object from JSON object.
