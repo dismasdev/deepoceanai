@@ -178,8 +178,13 @@ export function AgentSessionView_01({
 }: React.ComponentProps<'section'> & AgentSessionView_01Props) {
   const session = useSessionContext();
   const { messages } = useSessionMessages(session);
-  const { messages: bridgeMessages, error, isStreaming, isBridgeSpeaking, sendTextToBackend } =
-    useFastApiBridge();
+  const {
+    messages: bridgeMessages,
+    error,
+    isStreaming,
+    isBridgeSpeaking,
+    sendTextToBackend,
+  } = useFastApiBridge();
   const [chatOpen] = useState(true);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const forwardedMessageIdsRef = useRef<Set<string>>(new Set());
