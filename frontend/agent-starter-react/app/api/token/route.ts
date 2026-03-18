@@ -14,7 +14,7 @@ const API_KEY = process.env.LIVEKIT_API_KEY;
 const API_SECRET = process.env.LIVEKIT_API_SECRET;
 const LIVEKIT_URL = process.env.LIVEKIT_URL;
 const ALLOWED_SANDBOX_ID = process.env.SANDBOX_ID;
-const DEFAULT_AGENT_NAME = process.env.AGENT_NAME || process.env.SANDBOX_ID;
+const DEFAULT_AGENT_NAME = process.env.AGENT_NAME;
 
 // don't cache the results
 export const revalidate = 0;
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     }
 
     const roomConfigJson = body?.room_config ?? {};
-    const dispatchAgentName = DEFAULT_AGENT_NAME || requestSandboxId;
+    const dispatchAgentName = DEFAULT_AGENT_NAME?.trim();
     if (
       dispatchAgentName &&
       (!Array.isArray(roomConfigJson.agents) || roomConfigJson.agents.length === 0)

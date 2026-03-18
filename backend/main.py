@@ -69,7 +69,7 @@ async def health() -> dict:
 async def app_config(x_sandbox_id: str | None = Header(default=None, alias="X-Sandbox-ID")) -> dict:
     """Return dynamic app configuration in the format expected by agent-starter-react."""
     sandbox_id = (x_sandbox_id or "local-dev").strip() or "local-dev"
-    livekit_agent_name = (os.getenv("AGENT_NAME") or os.getenv("SANDBOX_ID") or sandbox_id).strip()
+    livekit_agent_name = (os.getenv("AGENT_NAME") or "").strip()
 
     return {
         "companyName": _entry("string", "Brainstorm AI"),
@@ -83,7 +83,7 @@ async def app_config(x_sandbox_id: str | None = Header(default=None, alias="X-Sa
         "audioVisualizerType": _entry("string", "radial"),
         "audioVisualizerRadialBarCount": _entry("number", 28),
         "audioVisualizerRadialRadius": _entry("number", 92),
-        "agentName": _entry("string", livekit_agent_name),
+        "agentName": _entry("string", livekit_agent_name) if livekit_agent_name else None,
         "sandboxId": _entry("string", sandbox_id),
     }
 

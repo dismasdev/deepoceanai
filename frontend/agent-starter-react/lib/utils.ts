@@ -99,7 +99,7 @@ export function getSandboxTokenSource(appConfig: AppConfig) {
   return TokenSource.custom(async () => {
     const url = new URL(process.env.NEXT_PUBLIC_CONN_DETAILS_ENDPOINT!, window.location.origin);
     const sandboxId = appConfig.sandboxId ?? '';
-    const dispatchAgentName = appConfig.agentName || sandboxId;
+    const dispatchAgentName = appConfig.agentName;
     const roomConfig = dispatchAgentName
       ? {
           agents: [{ agent_name: dispatchAgentName }],
