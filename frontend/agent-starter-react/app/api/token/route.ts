@@ -99,6 +99,16 @@ async function createAgentDispatch(roomName: string, agentName: string): Promise
 
   try {
     await dispatchClient.createDispatch(roomName, agentName);
+
+    // Some deployments can end up with legacy/blank dispatch entries.
+    // Remove those so only the explicit named agent dispatch remains.
+    const dispatches = await dispatchClient.listDispatch(roomName);
+    for (const dispatch of dispatches) {
+      const name = (dispatch.agentName ?? '').trim();
+      if (!name && dispatch.id) {
+        await dispatchClient.deleteDispatch(dispatch.id, roomName);
+      }
+    }
   } catch (error) {
     // If dispatch already exists or transient error occurs, let room join continue.
     console.error('Failed to create agent dispatch', error);
