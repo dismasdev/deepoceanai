@@ -1,6 +1,6 @@
 'use client';
 
-import { type CSSProperties, type ComponentProps, useMemo } from 'react';
+import { type CSSProperties, type ComponentProps, useEffect, useMemo, useState } from 'react';
 import { type VariantProps, cva } from 'class-variance-authority';
 import { type LocalAudioTrack, type RemoteAudioTrack } from 'livekit-client';
 import {
@@ -107,6 +107,8 @@ export function AgentAudioVisualizerRadial({
 }: AgentAudioVisualizerRadialProps &
   ComponentProps<'div'> &
   VariantProps<typeof AgentAudioVisualizerRadialVariants>) {
+  const [phase, setPhase] = useState(0);
+
   const _barCount = useMemo(() => {
     if (barCount) {
       return barCount;
@@ -168,9 +170,41 @@ export function AgentAudioVisualizerRadial({
     _barCount,
     sequencerInterval
   );
+  useEffect(() => {
+    if (state !== 'speaking' || audioTrack) {
+      return;
+    }
+
+    let raf = 0;
+    const animate = () => {
+      setPhase((prev) => (prev + 0.12) % (Math.PI * 2));
+      raf = requestAnimationFrame(animate);
+    };
+
+    raf = requestAnimationFrame(animate);
+    return () => {
+      cancelAnimationFrame(raf);
+    };
+  }, [audioTrack, state]);
+
+  const syntheticSpeakingBands = useMemo(
+    () =>
+      new Array(_barCount).fill(0).map((_, idx) => {
+        const waveA = (Math.sin(phase + idx * 0.35) + 1) / 2;
+        const waveB = (Math.sin(phase * 1.7 + idx * 0.18) + 1) / 2;
+        return 0.15 + waveA * 0.5 + waveB * 0.25;
+      }),
+    [_barCount, phase]
+  );
+
   const bands = useMemo(
-    () => (audioTrack ? volumeBands : new Array(_barCount).fill(0)),
-    [audioTrack, volumeBands, _barCount]
+    () =>
+      audioTrack
+        ? volumeBands
+        : state === 'speaking'
+          ? syntheticSpeakingBands
+          : new Array(_barCount).fill(0),
+    [audioTrack, volumeBands, _barCount, state, syntheticSpeakingBands]
   );
 
   const dotSize = useMemo(() => {

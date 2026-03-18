@@ -78,8 +78,9 @@ async def app_config(x_sandbox_id: str | None = Header(default=None, alias="X-Sa
         "supportsScreenShare": _entry("boolean", False),
         "isPreConnectBufferEnabled": _entry("boolean", True),
         "startButtonText": _entry("string", "Start Voice Session"),
-        "audioVisualizerType": _entry("string", "bar"),
-        "audioVisualizerBarCount": _entry("number", 9),
+        "audioVisualizerType": _entry("string", "radial"),
+        "audioVisualizerRadialBarCount": _entry("number", 28),
+        "audioVisualizerRadialRadius": _entry("number", 92),
         "agentName": None,
         "sandboxId": _entry("string", sandbox_id),
     }

@@ -33,11 +33,13 @@ export function useFastApiBridge() {
   const wsUrl = useMemo(() => buildWsUrl(backendBase), [backendBase]);
 
   const wsRef = useRef<WebSocket | null>(null);
+  const activeAudioRef = useRef<HTMLAudioElement | null>(null);
   const pendingChunksRef = useRef<string>('');
   const pendingMessageIdRef = useRef<string | null>(null);
 
   const [messages, setMessages] = useState<BridgeTranscriptMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isBridgeSpeaking, setIsBridgeSpeaking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastAudioUrl, setLastAudioUrl] = useState<string | null>(null);
 
@@ -114,8 +116,14 @@ export function useFastApiBridge() {
               : `${backendBase}${rawAudioUrl}`;
             setLastAudioUrl(resolvedAudioUrl);
             const audio = new Audio(resolvedAudioUrl);
+            activeAudioRef.current = audio;
+            audio.onplay = () => setIsBridgeSpeaking(true);
+            audio.onended = () => setIsBridgeSpeaking(false);
+            audio.onpause = () => setIsBridgeSpeaking(false);
+            audio.onerror = () => setIsBridgeSpeaking(false);
             void audio.play().catch(() => {
               // Auto-play can be blocked by browser policy; UI remains functional.
+              setIsBridgeSpeaking(false);
             });
           }
           setIsStreaming(false);
@@ -190,6 +198,7 @@ export function useFastApiBridge() {
     backendBase,
     messages,
     isStreaming,
+    isBridgeSpeaking,
     error,
     lastAudioUrl,
     sendTextToBackend,

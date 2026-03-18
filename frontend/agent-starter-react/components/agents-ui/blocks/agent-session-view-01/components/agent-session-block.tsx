@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, type MotionProps, motion } from 'motion/react';
 import { useAgent, useSessionContext, useSessionMessages } from '@livekit/components-react';
+import type { AgentState } from '@livekit/components-react';
 import { AgentChatTranscript } from '@/components/agents-ui/agent-chat-transcript';
 import {
   AgentControlBar,
@@ -177,11 +178,21 @@ export function AgentSessionView_01({
 }: React.ComponentProps<'section'> & AgentSessionView_01Props) {
   const session = useSessionContext();
   const { messages } = useSessionMessages(session);
-  const { messages: bridgeMessages, error, isStreaming, sendTextToBackend } = useFastApiBridge();
+  const { messages: bridgeMessages, error, isStreaming, isBridgeSpeaking, sendTextToBackend } =
+    useFastApiBridge();
   const [chatOpen] = useState(true);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const forwardedMessageIdsRef = useRef<Set<string>>(new Set());
   const { state: agentState } = useAgent();
+  const visualizerState = useMemo<AgentState>(() => {
+    if (isBridgeSpeaking) {
+      return 'speaking';
+    }
+    if (isStreaming) {
+      return 'thinking';
+    }
+    return agentState;
+  }, [agentState, isBridgeSpeaking, isStreaming]);
   const mergedMessages = useMemo(
     () => [...messages, ...bridgeMessages].sort((a, b) => a.timestamp - b.timestamp),
     [messages, bridgeMessages]
@@ -254,6 +265,7 @@ export function AgentSessionView_01({
       {/* Tile layout */}
       <TileLayout
         chatOpen={chatOpen}
+        audioStateOverride={visualizerState}
         audioVisualizerType={audioVisualizerType}
         audioVisualizerColor={audioVisualizerColor}
         audioVisualizerColorShift={audioVisualizerColorShift}

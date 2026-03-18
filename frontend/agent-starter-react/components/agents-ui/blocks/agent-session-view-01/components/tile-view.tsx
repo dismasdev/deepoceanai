@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Track } from 'livekit-client';
 import { AnimatePresence, type MotionProps, motion } from 'motion/react';
 import {
+  type AgentState,
   type TrackReference,
   VideoTrack,
   useLocalParticipant,
@@ -69,6 +70,7 @@ export function useLocalTrackRef(source: Track.Source) {
 
 interface TileLayoutProps {
   chatOpen: boolean;
+  audioStateOverride?: AgentState;
   audioVisualizerType?: 'bar' | 'wave' | 'grid' | 'radial' | 'aura';
   audioVisualizerColor?: `#${string}`;
   audioVisualizerColorShift?: number;
@@ -82,6 +84,7 @@ interface TileLayoutProps {
 
 export function TileLayout({
   chatOpen,
+  audioStateOverride,
   audioVisualizerType,
   audioVisualizerColor,
   audioVisualizerColorShift,
@@ -149,6 +152,7 @@ export function TileLayout({
                     audioVisualizerGridRowCount={audioVisualizerGridRowCount}
                     audioVisualizerGridColumnCount={audioVisualizerGridColumnCount}
                     audioVisualizerWaveLineWidth={audioVisualizerWaveLineWidth}
+                    stateOverride={audioStateOverride}
                     isChatOpen={chatOpen}
                     className={cn(
                       'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',

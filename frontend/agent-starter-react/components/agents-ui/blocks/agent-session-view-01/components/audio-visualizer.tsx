@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { type MotionProps, motion } from 'motion/react';
-import { useVoiceAssistant } from '@livekit/components-react';
+import { type AgentState, useVoiceAssistant } from '@livekit/components-react';
 import { AgentAudioVisualizerAura } from '@/components/agents-ui/agent-audio-visualizer-aura';
 import { AgentAudioVisualizerBar } from '@/components/agents-ui/agent-audio-visualizer-bar';
 import { AgentAudioVisualizerGrid } from '@/components/agents-ui/agent-audio-visualizer-grid';
@@ -18,6 +18,7 @@ const MotionAgentAudioVisualizerWave = motion.create(AgentAudioVisualizerWave);
 
 interface AudioVisualizerProps extends MotionProps {
   isChatOpen: boolean;
+  stateOverride?: AgentState;
   audioVisualizerType?: 'bar' | 'wave' | 'grid' | 'radial' | 'aura';
   audioVisualizerColor?: `#${string}`;
   audioVisualizerColorShift?: number;
@@ -32,6 +33,7 @@ interface AudioVisualizerProps extends MotionProps {
 
 export function AudioVisualizer({
   audioVisualizerType = 'bar',
+  stateOverride,
   audioVisualizerColor,
   audioVisualizerColorShift = 0.3,
   audioVisualizerBarCount = 5,
@@ -45,12 +47,13 @@ export function AudioVisualizer({
   ...props
 }: AudioVisualizerProps) {
   const { state, audioTrack } = useVoiceAssistant();
+  const visualizerState = stateOverride ?? state;
 
   switch (audioVisualizerType) {
     case 'aura': {
       return (
         <MotionAgentAudioVisualizerAura
-          state={state}
+          state={visualizerState}
           audioTrack={audioTrack}
           color={audioVisualizerColor}
           colorShift={audioVisualizerColorShift}
@@ -63,7 +66,7 @@ export function AudioVisualizer({
       return (
         <motion.div className={className} {...props}>
           <MotionAgentAudioVisualizerWave
-            state={state}
+            state={visualizerState}
             audioTrack={audioTrack}
             color={audioVisualizerColor}
             colorShift={audioVisualizerColorShift}
@@ -88,7 +91,7 @@ export function AudioVisualizer({
       return (
         <MotionAgentAudioVisualizerGrid
           size={size}
-          state={state}
+          state={visualizerState}
           color={audioVisualizerColor}
           audioTrack={audioTrack}
           rowCount={audioVisualizerGridRowCount}
@@ -106,7 +109,7 @@ export function AudioVisualizer({
         <motion.div className={className} {...props}>
           <MotionAgentAudioVisualizerRadial
             size="xl"
-            state={state}
+            state={visualizerState}
             color={audioVisualizerColor}
             audioTrack={audioTrack}
             radius={audioVisualizerRadialRadius}
@@ -137,7 +140,7 @@ export function AudioVisualizer({
       return (
         <MotionAgentAudioVisualizerBar
           size={size}
-          state={state}
+          state={visualizerState}
           color={audioVisualizerColor}
           audioTrack={audioTrack}
           barCount={audioVisualizerBarCount}
