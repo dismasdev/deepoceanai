@@ -51,7 +51,7 @@ export async function POST(req: Request) {
       dispatchAgentName &&
       (!Array.isArray(roomConfigJson.agents) || roomConfigJson.agents.length === 0)
     ) {
-      roomConfigJson.agents = [{ agent_name: dispatchAgentName }];
+      roomConfigJson.agents = [{ agentName: dispatchAgentName }];
     }
 
     // Recreate the RoomConfiguration object from JSON object.

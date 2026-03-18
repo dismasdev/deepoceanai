@@ -102,7 +102,7 @@ export function getSandboxTokenSource(appConfig: AppConfig) {
     const dispatchAgentName = appConfig.agentName;
     const roomConfig = dispatchAgentName
       ? {
-          agents: [{ agent_name: dispatchAgentName }],
+          agents: [{ agentName: dispatchAgentName }],
         }
       : undefined;
 
