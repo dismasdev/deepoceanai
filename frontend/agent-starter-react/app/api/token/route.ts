@@ -14,17 +14,12 @@ const API_KEY = process.env.LIVEKIT_API_KEY;
 const API_SECRET = process.env.LIVEKIT_API_SECRET;
 const LIVEKIT_URL = process.env.LIVEKIT_URL;
 const ALLOWED_SANDBOX_ID = process.env.SANDBOX_ID;
+const DEFAULT_AGENT_NAME = process.env.AGENT_NAME || process.env.SANDBOX_ID;
 
 // don't cache the results
 export const revalidate = 0;
 
 export async function POST(req: Request) {
-  if (process.env.NODE_ENV !== 'development') {
-    throw new Error(
-      'THIS API ROUTE IS INSECURE. DO NOT USE THIS ROUTE IN PRODUCTION WITHOUT AN AUTHENTICATION LAYER.'
-    );
-  }
-
   try {
     if (LIVEKIT_URL === undefined) {
       throw new Error('LIVEKIT_URL is not defined');
@@ -47,8 +42,16 @@ export async function POST(req: Request) {
       }
     }
 
+    const roomConfigJson = body?.room_config ?? {};
+    if (
+      DEFAULT_AGENT_NAME &&
+      (!Array.isArray(roomConfigJson.agents) || roomConfigJson.agents.length === 0)
+    ) {
+      roomConfigJson.agents = [{ agent_name: DEFAULT_AGENT_NAME }];
+    }
+
     // Recreate the RoomConfiguration object from JSON object.
-    const roomConfig = RoomConfiguration.fromJson(body?.room_config, { ignoreUnknownFields: true });
+    const roomConfig = RoomConfiguration.fromJson(roomConfigJson, { ignoreUnknownFields: true });
 
     // Generate participant token
     const participantName = 'user';
