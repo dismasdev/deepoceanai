@@ -14,7 +14,7 @@ services:
     routes:
       - path: /
     build_command: corepack enable && pnpm install --frozen-lockfile && pnpm build
-    run_command: pnpm start -- -p 8080
+    run_command: ./node_modules/.bin/next start -H 0.0.0.0 -p 8080
     envs:
       - key: NODE_ENV
         value: production
