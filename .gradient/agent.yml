@@ -1,0 +1,4 @@
+agent_environment: production
+agent_name: brainstorm-ai
+description: Brainstorm AI voice brainstorming assistant
+entrypoint_file: backend/adk_entrypoint.py

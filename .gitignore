@@ -1,0 +1,9 @@
+# Secrets
+.env
+.env.*
+
+# Python virtualenv
+.venv/
+
+# Frontend local env
+frontend/agent-starter-react/.env.local

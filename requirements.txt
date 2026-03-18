@@ -1,0 +1,7 @@
+# Deployment-only dependency file for Gradient ADK/App Platform builds.
+# Local development remains uv-first via pyproject.toml.
+fastapi>=0.115.0
+gradient>=0.1.0
+gradient-adk>=0.1.0
+python-multipart>=0.0.9
+uvicorn[standard]>=0.32.0

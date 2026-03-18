@@ -1,0 +1,38 @@
+name: brainstorm-ai-frontend
+region: nyc
+services:
+  - name: web
+    environment_slug: node-js
+    source_dir: /frontend/agent-starter-react
+    github:
+      repo: YOUR_GITHUB_ORG/YOUR_REPO
+      branch: main
+      deploy_on_push: false
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    routes:
+      - path: /
+    build_command: corepack enable && pnpm install --frozen-lockfile && pnpm build
+    run_command: pnpm start -- -p 8080
+    envs:
+      - key: NODE_ENV
+        value: production
+      - key: LIVEKIT_URL
+        value: wss://YOUR_PROJECT.livekit.cloud
+      - key: LIVEKIT_API_KEY
+        value: ""
+        type: SECRET
+      - key: LIVEKIT_API_SECRET
+        value: ""
+        type: SECRET
+      - key: AGENT_NAME
+        value: ""
+      - key: NEXT_PUBLIC_BACKEND_API_BASE
+        value: https://YOUR_BACKEND_DOMAIN
+      - key: NEXT_PUBLIC_APP_CONFIG_ENDPOINT
+        value: https://YOUR_BACKEND_DOMAIN/app-config
+      - key: NEXT_PUBLIC_CONN_DETAILS_ENDPOINT
+        value: /api/token
+      - key: SANDBOX_ID
+        value: opencolabo-ai-1ogbuq

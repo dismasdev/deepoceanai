@@ -1,0 +1,16 @@
+[project]
+name = "deepoceanai"
+version = "0.1.0"
+description = "Brainstorm AI MVP: real-time voice AI brainstorming assistant"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+	"fastapi>=0.115.0",
+	"gradient>=0.1.0",
+	"gradient-adk>=0.1.0",
+	"python-multipart>=0.0.9",
+	"uvicorn[standard]>=0.32.0",
+]
+
+[tool.uv]
+package = false
