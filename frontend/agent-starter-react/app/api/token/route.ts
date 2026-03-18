@@ -47,11 +47,9 @@ export async function POST(req: Request) {
 
     const roomConfigJson = body?.room_config ?? {};
     const dispatchAgentName = DEFAULT_AGENT_NAME?.trim();
-    if (
-      dispatchAgentName &&
-      (!Array.isArray(roomConfigJson.agents) || roomConfigJson.agents.length === 0)
-    ) {
-      roomConfigJson.agents = [{ agentName: dispatchAgentName }];
+    if (Array.isArray(roomConfigJson.agents)) {
+      // Dispatch is handled explicitly via AgentDispatchClient below.
+      delete roomConfigJson.agents;
     }
 
     // Recreate the RoomConfiguration object from JSON object.

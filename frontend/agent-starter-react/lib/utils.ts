@@ -99,12 +99,6 @@ export function getSandboxTokenSource(appConfig: AppConfig) {
   return TokenSource.custom(async () => {
     const url = new URL(process.env.NEXT_PUBLIC_CONN_DETAILS_ENDPOINT!, window.location.origin);
     const sandboxId = appConfig.sandboxId ?? '';
-    const dispatchAgentName = appConfig.agentName;
-    const roomConfig = dispatchAgentName
-      ? {
-          agents: [{ agentName: dispatchAgentName }],
-        }
-      : undefined;
 
     try {
       const res = await fetch(url.toString(), {
@@ -115,7 +109,7 @@ export function getSandboxTokenSource(appConfig: AppConfig) {
         },
         body: JSON.stringify({
           sandbox_id: sandboxId,
-          room_config: roomConfig,
+          room_config: {},
         }),
       });
       return await res.json();
