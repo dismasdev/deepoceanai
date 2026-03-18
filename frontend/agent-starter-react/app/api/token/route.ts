@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { AgentDispatchClient } from 'livekit-server-sdk';
 import { AccessToken, type AccessTokenOptions, type VideoGrant } from 'livekit-server-sdk';
 import { RoomConfiguration } from '@livekit/protocol';
 
@@ -67,6 +68,10 @@ export async function POST(req: Request) {
       roomConfig
     );
 
+    if (dispatchAgentName) {
+      await createAgentDispatch(roomName, dispatchAgentName);
+    }
+
     // Return connection details
     const data: ConnectionDetails = {
       serverUrl: LIVEKIT_URL,
@@ -83,6 +88,22 @@ export async function POST(req: Request) {
       console.error(error);
       return new NextResponse(error.message, { status: 500 });
     }
+  }
+}
+
+async function createAgentDispatch(roomName: string, agentName: string): Promise<void> {
+  if (!LIVEKIT_URL || !API_KEY || !API_SECRET) {
+    return;
+  }
+
+  const dispatchHost = LIVEKIT_URL.replace(/^wss:\/\//, 'https://').replace(/^ws:\/\//, 'http://');
+  const dispatchClient = new AgentDispatchClient(dispatchHost, API_KEY, API_SECRET);
+
+  try {
+    await dispatchClient.createDispatch(roomName, agentName);
+  } catch (error) {
+    // If dispatch already exists or transient error occurs, let room join continue.
+    console.error('Failed to create agent dispatch', error);
   }
 }
 
